@@ -36,24 +36,6 @@
     cd CCPMatrix
     chmod 755 ./bin/ccpmatrix
 
-要的MakeFile文件，可以直接使用：
-
-    tar zxvf CCPMatrix.tar.gz
-    cd CCPMatrix
-    make
-
-进行编译。本软件推荐使用gcc v8.x 之上版本进行编译。
-
-同时，也可以使用```make debug```获得debug模式的软件，此模式下本软件会输出更多的报错信息，可以有助于定位软件错误原因。
-
-在安装完成后，为了方便使用，可以将本软件的执行命令目录放置到系统的全局环境变量下，例如：
-
-    echo 'export PATH=$HOME/CCPMatrix/bin/:$PATH' >> ~/.bashrc
-或
-
-    ln -s $HOME/CCPMatrix/bin/ccpmatrix ~/.local/bin/ccpmatrix
-
-
 ### 软件运行
 
 运行本软件时，只需在命令行里输入相关命令即可：
