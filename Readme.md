@@ -1,153 +1,165 @@
-# 多群体基因组加-显亲缘关系矩阵构建软件V1.0用户手册
+<!--
+ * @Author: Zhuo Yue
+ * @LastEditTime: 2023-10-22 13:36
+ * @FilePath: \MAGE\Readme.md
+-->
+# MAGE: Metafounders Assisted Genomic Estimation
 
-## 软件介绍
+Multi-group Genomic Additive-Dominance Relationship Matrix Building Software V1.0 User Manual
 
-本软件是一种畜禽群体的基因组亲缘关系矩阵计算软件，其可实现对于多个无关群体及其杂交后代的亲缘关系的整合计算，建立无关群体间、群体和杂交后裔之间的遗传联系，同时本软件基于加-显效应进行设计，可以同时计算加性亲缘关系矩阵和显性亲缘关系矩阵。
+## Software Introduction
 
-本软件计算结果可供DMU、PIBLUP等软件导入使用，有助于提高遗传评估的准确性，提供对多群体个体信息的综合利用能力，有助于大幅提升育种选育效率和全产业链的生产效率。
+This software is a genomic relationship matrix calculation tool designed for livestock and poultry populations. It can perform integrated calculations for the kinship relationships of multiple unrelated populations and their hybrid offspring. The software establishes genetic connections between unrelated groups, between groups and their hybrid offspring, and is designed based on additive-dominance effects. It can calculate both additive and dominance relationship matrices simultaneously.
 
-## 安装说明
+The calculation results of this software can be imported into software like DMU, PIBLUP, etc., helping to improve the accuracy of genetic evaluation. It offers the ability to make comprehensive use of information from multiple populations, thereby significantly improving the efficiency of breeding selection and the overall production efficiency of the industry.
 
-本程序是在CentOS Linux release 7.9.2003平台上开发的，并基于Linux version 3.10.0-1127.19.1.el7.x86_64内核版本，其应可以运行在任何类Unix系统上。
+## Installation Instructions
 
-考虑到本程序主要基于C语言进行开发，重新编译后其应该亦可以运行在Windows或macOS等系统上。
+The program was developed on the `CentOS Linux release 7.9.2003` platform and is based on Linux version `3.10.0-1127.19.1.el7.x86_64` kernel version. It should be able to run on any Unix-like system.
 
-本软件进行常规群体亲缘关系计算时需保证系统内存在10GB以上，对于大规模群体，需要根据群体规模提供更充足的系统内存。常规arm64系统下，本软件最多接受系谱记录2,147,483,647条，最多接受基因组数据65,535条，如果需要更多数据导入，可以修改代码重新编译。
+Considering that the program is mainly developed in C language, it should also be runnable on Windows or macOS systems after recompilation.
 
-本软件在使用时，需要依赖于Intel® oneAPI Math Kernel Library科学计算库（无版本要求），Python (3.6及其以上版本)，需要用户保证运行环境中上述依赖的存在。同时，本软件编译时依赖python3-devel函数库，如需自行编译可以通过如下方式进行安装：
+For routine kinship calculations in this software, it is essential to ensure that the system has more than 10 GiB of memory. For large-scale populations, more system memory will be needed based on the size of the population. On a conventional arm64 system, the software accepts a maximum of `2,147,483,647` pedigree records and a maximum of `65,535` genomic data records. If you need to import more data, you can modify the code and recompile.
 
-    apt-get depends python3-dev
+This software relies on the `Intel® oneAPI Math Kernel Library` for scientific calculations (no version requirement), and Python (version 3.6 or above). Users need to ensure the existence of these dependencies in their runtime environment. Additionally, the software compilation depends on the python3-devel library, which can be installed as follows:
 
-或
+```bash
+apt-get depends python2-dev
+apt-get depends python3-dev
+```
 
-    yum install python3-devel
+or
 
-如果用户的Python为完整编译安装，应已经存在此依赖库，无需另行安装。但如用户需要使用完整编译安装的Python的依赖库，需要保证Python版本低于3.9。
+```bash
+yum install python2-devel
+yum install python3-devel
+```
 
-## 快速上手
+If the user's Python is fully compiled and installed, this dependency should already exist and no separate installation is necessary. However, if users need to use the dependency library of the fully compiled and installed Python, they need to ensure that the Python version is below 3.9.
 
-请注意，如无特殊说明，以下的所有操作全部是在Linux命令行模式下操作进行。
+## Quick Start
 
-### 安装
+Please note that, unless otherwise specified, all of the following operations are carried out in Linux command-line mode.
 
-本软件提供了预编译的二进制文件，可以直接下载使用：
+### Installation
 
-    tar zxvf CCPMatrix.tar.gz
-    cd CCPMatrix
-    chmod 755 ./bin/ccpmatrix
+The software provides pre-compiled binary files that can be directly downloaded and used:
 
-### 软件运行
+```bash
+tar zxvf mage.tar.gz
+cd mage
+chmod 755 ./bin/mage
+```
 
-运行本软件时，只需在命令行里输入相关命令即可：
+### Running the Software
 
-    ccpmatrix --pedigree=string --gene=string [options] ...
+To run the software, simply enter the relevant commands in the command line:
 
-pedigree参数指定软件所需要的系谱文件，gene参数指定软件所需要的基因组文件，此两个参数是软件运行所必须的，可以使用相对路径或者绝对路径。
+```bash
+mage --pedigree=string --gene=string [options] ...
+```
+The pedigree parameter specifies the pedigree file needed by the software, and the gene parameter specifies the genomic file needed by the software. These two parameters are mandatory for running the software and can be specified using either relative or absolute paths.
 
-输入文件应该是ASCII格式的文件，使用空格或者制表符表示间隔，文件为dos格式或unix格式是不重要的，但是仍然推荐使用unix格式，这会让软件的运行更加稳定。文件不应该包括表头，更详细的输入文件的格式需要请参阅第四章文件格式部分。
+Input files should be in ASCII format, with spaces or tabs used as delimiters. Whether the files are in DOS format or UNIX format is not crucial, although using UNIX format is recommended for more stable software operation. Files should not include headers. For more detailed information on the format of the input files, please refer to the Chapter about File Formats.
 
-### 软件其他相关参数介绍
+### Introduction to Other Relevant Parameters of the Software
 
-软件的其他相关参数使用如下命令可查询：
+Other relevant parameters for the software can be queried using the following command:
 
-    ccpmatrix -h
+```bash
+mage -h
+```
+The specific details of each parameter are as follows:
 
-相关信息如下图所示：
+- `-p, --pedigree`: pedigree file path (string)
+    - Specifies the pedigree file, which can be either a relative or an absolute path.
 
-各参数具体的介绍如下：
+- `-g, --gene`: gene file path (string)
+    - Specifies the genomic file, which can be either a relative or an absolute path.
 
-    -p, --pedigree    pedigree file path (string)
-    指定系谱文件，可以使用相对路径和绝对路径。
+- `-o, --output`: output file prefix (string [=output])
+    - Specifies the prefix for the output files. Paths are not allowed, and the default value is 'output'.
 
-    -g, --gene        gene file path (string)
-    指定基因组文件，可以使用相对路径和绝对路径。
+- `-O, --out-dir`: output file directory (string [=./output])
+    - Specifies the output directory, which can be either a relative or an absolute path. The default is './output'.
 
-    -o, --output      output file prefix (string [=output])
-    指定输出文件前缀，不能使用路径，默认值为output。
+- `-A, --AMatrix`: output A matrix
+	- Additionally outputs the pedigree kinship matrix; off by default.
 
-    -O, --out-dir     output file dicectionary (string [=./output])
-    指定输出文件夹，可以使用相对路径和绝对路径，默认为./output。
+- `-G, --GMatrix`: output G matrix
+	- Additionally outputs the genomic kinship matrix; off by default.
 
-    -A, --AMatrix     output A matrix
-    额外输出系谱亲缘关系矩阵，默认为否。
+- `--add`: only calculate additive kinship matrix
+	- Calculates only the additive kinship matrix. Conflicts with the dom parameter.
 
-    -G, --GMatrix     output G matrix
-    额外输出基因组亲缘关系矩阵，默认为否。
+- `--dom`: only calculate dominance kinship matrix
+	- Calculates only the dominance kinship matrix. Conflicts with the add parameter.
 
-    ,  --add         only calculate additive kinship matrix
-    只计算加性亲缘关系矩阵，与dom参数矛盾。
+- `-M, --Matrix`: Output original matrix or inverse matrix (string [=all])
+	- Specifies the matrix output mode. Options include:
+      - original: Outputs only the original matrix.
+      - inverse: Outputs only the inverse matrix.
+      - all: Outputs both.
 
-    ,  --dom         only calculate dominance kinship matrix
-    只计算显性亲缘关系矩阵，与add参数矛盾。
+- `--MFs`: use metafounders
+	- Enforces the use of the metafounder model.
 
-    -M, --Matrix      Output original matrix or inverse matrix (string [=all])
-    输出的矩阵模式，可供选择的参数包括：
+- `--no-cMFs`: don't use metafounders of multiple breeds
+	- Forces the program not to use the metafounder model.
 
-    original：只输出原矩阵
+- `-b, --breed`: only calculate the breed (string [=all])
+	- Specifies the breed to be calculated. The default is to calculate for all breeds.
 
-    inverse：只输出逆矩阵
+- `-f, --full`: use full storage output type
+	- Changes the output to a full-storage matrix format, by default it's in half-storage format.
 
-    all：和全部输出。
+- `-a, --all`: use full storage and half storage output type
+	- Outputs both full-storage and half-storage matrix formats, overriding the --full parameter.
 
-    ,   --MFs         use metafounders
-    强制使用元建立者模式。
+- `-m, --maf`: minor allele frequency (int [=0])
+	- Specifies the minor allele frequency, with a default value of 0.
 
-    ,  --no-cMFs     don't use metafounders of multiple breeds
-    强制不使用元建立者模式。
+- `-c, --course`: keep process files
+	- Retains intermediate files used during the calculation process.
 
-    -b, --breed       only calculate the breed (string [=all])
-    指定所需要计算的品种，默认为全部计算。
+- `-v, --version`: print version message
+	- Prints the software version and exits.
 
-    -f, --full        use full storge output type
-    输出结果改变为矩阵的全存储模式，默认为半存储模式。
+- `-q, --quite`: do not output to stdout
+	- Suppresses standard output; doesn't affect log output.
 
-    -a, --all         use full storge and half storge output type
-    同时输出矩阵的全存储模式和半存储模式，会覆盖--full参数。
+- `-d, --debug`: output debug information
+	- Enables debug mode.
 
-    -m, --maf         minor allele frequency (int [=0])
-    指定最小等位基因频率，默认为0。
+- `-h, --help`: print this message
+	- Prints the help message and exits.
 
-    -c, --course      keep process files
-    保留计算过程的中间文件。
+## File Description
 
-    -v, --version     print version message
-    打印软件版本并退出。
+The relevant files include the required pedigree files and genotype files. Files should be ASCII-formatted files, separated by one or multiple spaces (or newline characters). The variable names for categories can include English letters and numbers. The individual numbers should be consistent across different files.
 
-    -q, --quite       do not output to stdout
-    关闭标准输出，不会影响日志输出。
+### Pedigree File
+The pedigree file is used to determine additive genetic relationships. The pedigree file required by this software should include five columns:
 
-    -d, --debug       output debug information
-    启用debug模式。
+1. ID
+   - The individual number for random effects (genetic effects) in the model.
 
-    -h, --help        print this message
-    打印帮助信息并退出。
+2. Sire ID
+   - The sire number; if unknown, use 0.
 
-## 文件说明
+3. Dam ID
+   - The dam number; if unknown, use 0.
 
-相关文件包括所需的系谱文件、基因型文件。文件应该是ASCII格式文件，其由一个或数个空格（或换行符）分隔。分类的变量名可以包含英文字母和数字。个体号在不同的文件中应一致。
+4. SORT
+   - The order of the individuals, which can be numerical birth dates or generations. You can use 0 for all, and the software will calculate and use the number of generations. All individuals must be specified if imported.
 
-### 系谱文件
+5. BREED
+   - Breed information, specified using single-letter encoding. For crossbred individuals, use 0, but both parents must exist in the pedigree. Crossbred individuals without both parents in the pedigree will be discarded.
 
-系谱文件用于确定加性遗传关系。本软件所需要的系谱文件应该包括五列：
 
-    1：ID
-    模型中随机效应（遗传效应）的个体号。
+The pedigree file should not include headers, and any data must include all five columns. Missing data can be represented with 0. A typical pedigree that includes multiple groups and their crossbred offspring is shown below:
 
-    2：Sire ID
-    公畜号，当公畜未知时，为0。
-
-    3：Dam ID
-    母畜号，当母畜未知时，为0。
-
-    4：SORT
-    个体顺序，可以使用数值化的出生日期或世代，可以全部使用0，软件将计算世代数并使用。如需导入所有个体均需要指定。
-
-    5：BREED
-    品种信息，使用单字母编码指定，杂交个体使用0指定，但需要父母均存在于系谱中，父母不存在的杂种个体将会被丢弃。
-
-系谱文件不应该包括表头，任何的数据必须包含全部的五列，缺失的数据可以使用0进行指代。一个典型的包含多个群体及其杂交后代的系谱如下所示：
-
-    Pedigree file – ped （示例）
+    Pedigree file – ped (example)
     1 0 0 0 A
     2 0 0 0 A
     3 1 2 0 A
@@ -157,15 +169,14 @@ pedigree参数指定软件所需要的系谱文件，gene参数指定软件所�
     7 2 6 0 0
     8 3 6 0 0
 
-### 基因组文件
+### Genome File
+The genotype file is used to construct the genomic relationship matrix. The genotypes of all markers for each individual are listed in one row. The individual number is in the first column, followed by the genotype encoding for each marker. The individual numbers must match those specified in the pedigree. Any genomic information not existing in the pedigree will be discarded. For individuals without a pedigree, if you wish to keep the genomic information, you can add the individual to the pedigree and specify both parents as missing.
 
-基因型文件用于构建基因组关系矩阵，个体所有标记的基因型被列在一行，个体号在第一列，后面一列是每个标记的基因型编码，个体号需要与系谱中指定的个体号相同，任何不存在于系谱中的基因组信息将会被丢弃，对于不具有系谱的个体，若想保留基因组信息，可以于系谱中增加个体，并将父母均指定为缺失。
+In genotype encoding, 0 and 2 represent the two homozygotes, while 1, 3, and 4 represent heterozygotes. 3 and 4 indicate that the dominant allele in the heterozygote comes from the sire and dam, respectively. 1 indicates that the origin of the heterozygous genes is uncertain and can only be used in purebred individuals. 5 represents missing values.
 
-基因型编码时，0和2代表两个纯合子，1、3、4代表杂合子。3、4分别表示杂合子的优势基因来自父本和母本，1表示杂合子基因起源不确定，仅能在纯种个体中使用，5表示缺失值。
+A typical genome file that includes multiple groups and their crossbred offspring is shown below:
 
-一个典型的包含多个群体及其杂交后代的基因组文件如下所示：
-
-    Gene file – gene （示例）
+    Gene file – gene (example)
     1 12021022012
     2 1022120122
     3 0210102210
@@ -175,23 +186,22 @@ pedigree参数指定软件所需要的系谱文件，gene参数指定软件所�
     7 3000304202
     8 2033202430
 
-在一般情况下，本软件所需要的基因组文件可以通过plink格式使用如下命令生成：
+In general, the genome file required by this software can be generated in PLINK format using the following command:
+```bash
+plink --bfile $1 --recodeA --out $1.q
+awk '{$1="";$3="";$4="";$5="";$6="";print $0}' $1.q.raw | sed '1d' | sed "s/NA/5/g" > $1.genotype.txt
+paste -d " " <( awk '{print $1}' $1.genotype.txt) <( awk '{$1="";print $0}' $1.genotype.txt | sed  "s/ //g") > $1.geno.txt
+```
+### Output Files
+By default, the software outputs the kinship matrix in semi-storage mode, i.e., only the diagonal elements and the lower triangular matrix of the kinship matrix are output. If needed, the full-storage mode of the kinship matrix can be output by using the --full or --all parameters.
 
-    plink --bfile $1 --recodeA --out $1.q
-    awk '{$1="";$3="";$4="";$5="";$6="";print $0}' $1.q.raw | sed '1d' | sed "s/NA/5/g" > $1.genotype.txt
-    paste -d " " <( awk '{print $1}' $1.genotype.txt) <( awk '{$1="";print $0}' $1.genotype.txt | sed  "s/ //g") > $1.geno.txt
+The result file is output as the inverse of the kinship matrix by default. To output the original matrix, please modify the --Matrix parameter setting.
 
-### 输出文件
+Each row of the output file represents a matrix element and is separated by a tab. The format is: IdRow IdCol value, where IdRow and IdCol represent the individual numbers corresponding to the rows and columns, respectively.
 
-默认情况下本软件输出半存储模式的亲缘关系矩阵，即只输出亲缘关系矩阵的对角线元素和下三角矩阵，如果有需要可以通过参数```--full```或者```--all```输出全存储模式的亲缘关系矩阵。
+A typical output file might look like the following:
 
-结果文件默认输出为亲缘关系矩阵的逆矩阵，如需输出原矩阵，请修改```--Matrix```参数配置。
-
-输出文件的每行表示一个矩阵元素，并使用制表符进行分割，其格式为:```IdRow IdCol value```，这里```IdRow```和```IdCol```代表对应行和列的个体号。
-
-一个典型的输出文件可能如下所示：
-
-    Output file – output_A_ahim_half（示例）
+    Output file – output_A_ahim_half (example)
     1 1 1.5
     2 1 0.5
     2 2 3.64235
@@ -208,83 +218,120 @@ pedigree参数指定软件所需要的系谱文件，gene参数指定软件所�
     7 8 0
     7 7 3.10575
 
-根据软件运行的参数选项，软件会产生多种不同的亲缘关系矩阵输出，其通过后缀进行区别，其文件命名安装如下形式```<prefix>_<breed>_<mat>_<storage>.txt```。```prefix```为用户通过参数指定的前缀，默认状态下为```output```；```breed```为用户系谱信息中导入的品种信息，除非通过```--breed```参数进行了指定，每个品种都会输出单独的亲缘关系矩阵文件；```storage```表示结果文件的格式是全存储（full）或者半存储（half）的；```mat```为矩阵的格式文件，声明了矩阵是加性矩阵或是显性矩阵，原矩阵或是逆矩阵等信息，其具体包含如下种类：
+Parameter-based Output Files
+Based on the parameter options set during software operation, the software will produce various types of kinship matrix outputs. These are distinguished through suffixes, with the file names following the format `<prefix>_<breed>_<mat>_<storage>.txt`.
 
-    aprm 系谱加性亲缘关系矩阵
-    apim 系谱加性亲缘关系矩阵的逆矩阵
-    agrm 基因组加性亲缘关系矩阵
-    agim 基因组加性亲缘关系矩阵的逆矩阵
-    ahrm 加性H矩阵
-    ahim 加性H矩阵的逆矩阵
-    dprm 系谱显性亲缘关系矩阵
-    dpim 系谱显性亲缘关系矩阵的逆矩阵
-    dgrm 基因组显性亲缘关系矩阵
-    dgim 基因组显性亲缘关系矩阵的逆矩阵
-    dhrm 显性H矩阵
-    dhim 显性H矩阵的逆矩阵
+prefix: Specified by the user as a parameter; defaults to output.
+breed: Corresponds to the breed information imported into the user's pedigree, unless specified by the --breed parameter. Each breed will have its separate kinship matrix file.
+storage: Indicates whether the result file is in full-storage (full) or semi-storage (half) format.
+mat: Indicates the matrix format, specifying whether the matrix is additive or dominant, the original matrix or its inverse, etc.
+The specific types include:
 
-## 典型示例
+- aprm
+    - Pedigree Additive Relationship Matrix
+- apim
+    - Inverse of Pedigree Additive Relationship Matrix
+- agrm
+    - Genomic Additive Relationship Matrix
+- agim
+    - Inverse of Genomic Additive Relationship Matrix
+- ahrm
+    - Additive H Matrix
+- ahim
+    - Inverse of Additive H Matrix
+- dprm
+    - Pedigree Dominant Relationship Matrix
+- dpim
+    - Inverse of Pedigree Dominant Relationship Matrix
+- dgrm
+    - Genomic Dominant Relationship Matrix
+- dgim
+    - Inverse of Genomic Dominant Relationship Matrix
+- dhrm
+    - Dominant H Matrix
+- dhim
+    - Inverse of Dominant H Matrix
 
-示例数据集可在example文件夹下找到。
 
-### 默认参数运算
+## Typical Examples
 
-    ccpmatrix --pedigree ped.dat --gene gene.dat
+Sample datasets can be found in the example folder.
 
-软件调用```ped.dat```中的系谱文件和```gene.dat```中的基因组文件，输出结果包含两类文件:```output_{breed}_ahim_half.txt```包含加性H矩阵的逆矩阵信息，```output_{breed}_dhim_half.txt```包含显性H矩阵的逆矩阵信息，文件均为三列:个体号、个体号、值。
+### Calculation with Default Parameters
 
-### 改变输出路径和输出前缀
+```bash
+mage --pedigree ped.dat --gene gene.dat
+```
 
-    ccpmatrix --pedigree ped.dat --gene gene.dat --output test --out-dir ~/test
+The software will use the pedigree file `ped.dat` and the genome file `gene.dat`. The output will include two types of files: `output_{breed}_ahim_half.txt` containing the inverse matrix information of the additive H matrix, and output_`{breed}_dhim_half.txt` containing the inverse matrix information of the dominant H matrix. Both files will have three columns: individual number, individual number, and value.
 
-输出结果包含两类文件: ```test_{breed}_ahim_half.txt```包含加性H矩阵的逆矩阵信息，```test_{breed}_dhim_half.txt```包含显性H矩阵的逆矩阵信息，输出文件和日志将位于```~/test```文件夹下。
+### Changing the Output Path and Prefix
 
-### 额外输出系谱亲缘关系矩阵和基因组亲缘关系矩阵
+```bash
+mage --pedigree ped.dat --gene gene.dat --output test --out-dir ~/test
+```
 
-    ccpmatrix --pedigree ped.dat --gene gene.dat -A -G
+The output will include two types of files: `test_{breed}_ahim_half.txt` containing the inverse matrix information of the additive H matrix, and `test_{breed}_dhim_half.txt` containing the inverse matrix information of the dominant H matrix. Output files and logs will be located in the `~/test` folder.
 
-输出结果包含六类文件:
+### Additional Output of Pedigree and Genomic Kinship Matrices
 
-```output_{breed}_apim_half.txt```包含系谱加性亲缘关系矩阵的逆矩阵信息；
+```bash
+mage --pedigree ped.dat --gene gene.dat -A -G
+```
 
-```output_{breed}_agim_half.txt```包含基因组加性亲缘关系矩阵的逆矩阵信息；
+The output will include six types of files:
 
-```output_{breed}_ahim_half.txt```包含加性H矩阵的逆矩阵信息；
+- `output_{breed}_apim_half.txt`
+    - Contains the inverse matrix information of the pedigree additive kinship matrix.
+- `output_{breed}_agim_half.txt`
+    - Contains the inverse matrix information of the genomic additive kinship matrix.
+- `output_{breed}_ahim_half.txt`
+    - Contains the inverse matrix information of the additive H matrix.
+- `output_{breed}_dpim_half.txt`
+    - Contains the inverse matrix information of the pedigree dominant kinship matrix.
+- `output_{breed}_dgim_half.txt`
+    - Contains the inverse matrix information of the genomic dominant kinship matrix.
+- `output_{breed}_dhim_half.txt`
+    - Contains the inverse matrix information of the dominant H matrix.
 
-```output_{breed}_dpim_half.txt```包含系谱显性亲缘关系矩阵的逆矩阵信息；
+All files have three columns: individual ID, individual ID, value.
 
-```output_{breed}_dgim_half.txt```包含基因组显性亲缘关系矩阵的逆矩阵信息；
+### Calculate Additive Relationship Only
 
-```output_{breed}_dhim_half.txt```包含显性H矩阵的逆矩阵信息，
+```bash
+mage --pedigree ped.dat --gene gene.dat --add
+```
 
-所有文件均为三列:个体号、个体号、值。
+The output includes one type of file: `output_{breed}_ahim_half.txt` contains information of the inverse matrix of the additive H matrix. The file has three columns: individual ID, individual ID, value.
 
-### 仅计算加性亲缘关系
+### Calculate for Specific Breed Only
 
-    ccpmatrix --pedigree ped.dat --gene gene.dat --add
+```bash
+mage --pedigree ped.dat --gene gene.dat --breed A
+```
 
-输出结果包含一类文件: ```output_{breed}_ahim_half.txt```包含加性H矩阵的逆矩阵信息，文件均为三列:个体号、个体号、值。
+The output includes two types of files: `output_A_ahim_half.txt` contains information of the inverse matrix of the additive H matrix, and `output_A_dhim_half.txt` contains information of the inverse matrix of the dominant H matrix. Both files have three columns: individual ID, individual ID, value.
 
-### 仅计算特定品种
+### Additionally Output the Original Matrix
 
-    ccpmatrix --pedigree ped.dat --gene gene.dat --breed A
+```bash
+cpmatrix --pedigree ped.dat --gene gene.dat --Matrix all
+```
 
-输出结果包含两个文件: ```output_A_ahim_half.txt```包含加性H矩阵的逆矩阵信息，```output_A_dhim_half.txt```包含显性H矩阵的逆矩阵信息，文件均为三列:个体号、个体号、值。
+The output includes four types of files: `output_{breed}_ahrm_half.txt` contains information of the additive H matrix, output_{breed}_ahim_half.txt contains information of the inverse matrix of the additive H matrix, `output_{breed}_dhrm_half.txt` contains information of the dominant H matrix, `output_{breed}_dhim_half.txt` contains information of the inverse matrix of the dominant H matrix. All files have three columns: individual ID, individual ID, value.
 
-### 额外输出原矩阵
+### Output in Full Storage Mode
 
-    cpmatrix --pedigree ped.dat --gene gene.dat --Matrix all
+```bash
+mage --pedigree ped.dat --gene gene.dat --full
+```
 
-输出结果包含四类文件: ```output_{breed}_ahrm_half.txt```包含加性H矩阵信息，```output_{breed}_ahim_half.txt```包含加性H矩阵的逆矩阵信息，```output_{breed}_dhrm_half.txt```包含显性H矩阵信息，```output_{breed}_dhim_half.txt```包含显性H矩阵的逆矩阵信息，文件均为三列:个体号、个体号、值。
+The output includes two types of files: `output_{breed}_ahim_full.txt` contains information of the inverse matrix of the additive H matrix, `output_{breed}_dhim_full.txt` contains information of the inverse matrix of the dominant H matrix. Both files have three columns: individual ID, individual ID, value.
 
-### 输出改为全存储模式
+### Output All Possible Results from this Software
 
-    ccpmatrix --pedigree ped.dat --gene gene.dat --full
+```bash
+mage --pedigree ped.dat --gene gene.dat -A -G --Matrix all --all
+```
 
-输出结果包含两类文件: ```output_{breed}_ahim_full.txt```包含加性H矩阵的逆矩阵信息，```output_{breed}_dhim_full.txt```包含显性H矩阵的逆矩阵信息，文件均为三列:个体号、个体号、值。
-
-### 输出本软件可能的全部结果
-
-    ccpmatrix --pedigree ped.dat --gene gene.dat -A -G --Matrix all --all
-
-不同的参数可以协同使用，本示例会输出软件全部的24种结果文件，在此不再赘述。
+Different parameters can be used in combination. This example will output all 24 types of result files from the software, which are not detailed here.
